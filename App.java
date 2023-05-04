@@ -13,6 +13,13 @@ public class App extends JPanel{
     private String[] columnNames
             = {"ID", "Name", "StudyID", "Next Appointment"};
 
+    private Object[][] attributes = {
+            {"Name", null},
+            {"Address", null},
+            {"Doctor", null},
+            {"Study", null},
+            {"Participation", null}
+    };
     private Object[][] data = {
             {"01", "Justin Bieber", "12", "May 07"},
             {"02", "Janelle Monae", "32", "May 04"},
@@ -45,7 +52,12 @@ public class App extends JPanel{
                 if (e.getClickCount() == 2) {     // to detect double click events
                     JTable target = (JTable)e.getSource();
                     int row = target.getSelectedRow(); // select a row
-                    JOptionPane.showMessageDialog(null, jTable.getValueAt(row, 1)); // get the value of a row and column.
+                    JFrame patientFrame = new JFrame((String) jTable.getValueAt(row, 1));
+                    JTable patientInfo = new JTable(new DefaultTableModel(attributes, new String[]{"Attributes", "Info"}));
+                    patientFrame.add(patientInfo);
+                    patientFrame.pack();
+                    patientFrame.setLocationRelativeTo(null);
+                    patientFrame.setVisible(true);
                 }
             }
         });
@@ -95,7 +107,7 @@ public class App extends JPanel{
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable(){
             public void run() {
-                JFrame frame = new JFrame("Row Filter");
+                JFrame frame = new JFrame("Patients");
                 frame.add(new App());
                 frame.pack();
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
