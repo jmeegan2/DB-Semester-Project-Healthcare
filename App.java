@@ -8,15 +8,13 @@ import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import Entities_Data.Relationship;
-import Entities_Data.Patient;
-import Entities_Data.Doctor;
+
 public class App extends JPanel {
-    private String[] PatientColumns
+    private String[] patientColumns
             = {"ID", "Fname", "Lname", "DOB", "Treated Y/N", "StudyID", "Next Appointment"};
 
 
-    private Object[][] Patient = {
+    private Object[][] patient = {
             {"01", "Justin", "Bieber", "05/07/1994", "Yes", "12", "05/07/2023"},
             {"02", "Janelle", "Monae", "12/01/1985", "Yes", "32", "05/04/2023"},
             {"03", "Min", "Yoongi", "03/09/1993", "No", "32", null},
@@ -26,7 +24,7 @@ public class App extends JPanel {
             {"07", "Holden", "Door", "07/16/1949", "Yes", "12", "05/04/2023"}
     };
 
-    private DefaultTableModel patientModel = new DefaultTableModel(Patient, PatientColumns);
+    private DefaultTableModel patientModel = new DefaultTableModel(patient, patientColumns);
     // Define columns for the Doctor table
     private String[] doctorColumns = {"Doctor_ID", "Fname", "Lname"};
 
