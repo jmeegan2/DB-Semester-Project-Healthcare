@@ -1,8 +1,13 @@
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Vector;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -10,19 +15,18 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-public class PatientGUI extends JFrame {
+public class DepartmentGUI extends JFrame {
 
     private JButton showButton;
     private JTable table;
     private Connection connection;
 
-    public PatientGUI(JTable table) {
-        this.table = table;
-        setTitle("Patient GUI");
+    public DepartmentGUI() {
+        setTitle("Department GUI");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Create the "Show" button
-        showButton = new JButton("Show Patients");
+        showButton = new JButton("Show Departments");
         showButton.addActionListener(new ActionListener() {
             private boolean tableVisible = false; // Keep track of whether the table is visible
 
@@ -35,23 +39,31 @@ public class PatientGUI extends JFrame {
                     Statement statement = connection.createStatement();
 
                     // Execute the query and get the result set
-                    ResultSet resultSet = statement.executeQuery("SELECT * FROM mydb.Patient");
+                    ResultSet resultSet = statement.executeQuery("SELECT * FROM mydb.Department");
 
-                    // Create a table model with the result set data
-                    DefaultTableModel tableModel = buildTableModel(resultSet);
-
-                    // Set the patient table model to the table model with the result set data
-                    table.setModel(tableModel);
+                    // Create a JTable and set its model to display the result set data
+                    if (!tableVisible) {
+                        // Table is not visible, so display it
+                        table.setModel(buildTableModel(resultSet));
+                        tableVisible = true;
+                    } else {
+                        // Table is visible, so hide it
+                        table.setModel(new DefaultTableModel());
+                        tableVisible = false;
+                    }
 
                     // Close the resources
                     resultSet.close();
                     statement.close();
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(PatientGUI.this, "Database connection error: " + ex.getMessage(),
+                    JOptionPane.showMessageDialog(DepartmentGUI.this, "Database connection error: " + ex.getMessage(),
                             "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
+
+        // Create the JTable with an empty model
+        table = new JTable(new DefaultTableModel());
 
         // Add the components to the frame
         add(showButton, BorderLayout.NORTH);
@@ -90,5 +102,6 @@ public class PatientGUI extends JFrame {
         // Create a DefaultTableModel with the column names and data vectors
         return new DefaultTableModel(data, columnNames);
     }
+
 
 }
