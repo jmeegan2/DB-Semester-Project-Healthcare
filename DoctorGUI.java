@@ -10,18 +10,18 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-public class PatientGUI extends JFrame {
+public class DoctorGUI extends JFrame {
 
     private JButton showButton;
     private JTable table;
     private Connection connection;
 
-    public PatientGUI() {
-        setTitle("Patient GUI");
+    public DoctorGUI() {
+        setTitle("Doctor GUI");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Create the "Show" button
-        showButton = new JButton("Show Patients");
+        showButton = new JButton("Show Doctors");
         showButton.addActionListener(new ActionListener() {
             private boolean tableVisible = false; // Keep track of whether the table is visible
 
@@ -34,7 +34,7 @@ public class PatientGUI extends JFrame {
                     Statement statement = connection.createStatement();
 
                     // Execute the query and get the result set
-                    ResultSet resultSet = statement.executeQuery("SELECT * FROM mydb.Patient");
+                    ResultSet resultSet = statement.executeQuery("SELECT * FROM mydb.Doctor");
 
                     // Create a JTable and set its model to display the result set data
                     if (!tableVisible) {
@@ -51,12 +51,11 @@ public class PatientGUI extends JFrame {
                     resultSet.close();
                     statement.close();
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(PatientGUI.this, "Database connection error: " + ex.getMessage(),
+                    JOptionPane.showMessageDialog(DoctorGUI.this, "Database connection error: " + ex.getMessage(),
                             "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
-
 
         // Create the JTable with an empty model
         table = new JTable(new DefaultTableModel());
@@ -98,6 +97,5 @@ public class PatientGUI extends JFrame {
         // Create a DefaultTableModel with the column names and data vectors
         return new DefaultTableModel(data, columnNames);
     }
-
 
 }
