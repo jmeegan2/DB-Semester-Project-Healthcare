@@ -29,9 +29,6 @@
     <filter-actions connection-id="e7b5f10e-ede9-40cb-bab3-1fcf06cf7c76" dataset="mydb.Specimen" active-filter-id="" />
     <filter-actions connection-id="e7b5f10e-ede9-40cb-bab3-1fcf06cf7c76" dataset="mydb.Appointments" active-filter-id="" />
   </component>
-  <component name="DBNavigator.Project.ExecutionManager">
-    <retain-sticky-names value="false" />
-  </component>
   <component name="DBNavigator.Project.ObjectQuickFilterManager">
     <last-used-operator value="EQUAL" />
     <filters />

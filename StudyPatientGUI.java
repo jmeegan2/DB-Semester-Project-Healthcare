@@ -1,22 +1,17 @@
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Vector;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-public class StudyGUI extends JFrame {
-
+public class StudyPatientGUI extends JFrame {
+    
 
     // Helper method to convert a ResultSet to a DefaultTableModel
     public static DefaultTableModel buildTableModel(ResultSet resultSet) throws SQLException {

@@ -1,65 +1,56 @@
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.Statement;
+import java.sql.SQLException;
 import java.util.Vector;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 public class PatientGUI extends JFrame {
 
-    private JButton showButton;
-    private JTable table;
-    private Connection connection;
 
-    public PatientGUI(JTable table) {
-        this.table = table;
-        setTitle("Patient GUI");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Create the "Show" button
-        showButton = new JButton("Show Patients");
-        showButton.addActionListener(new ActionListener() {
-            private boolean tableVisible = false; // Keep track of whether the table is visible
+    // Helper method to show the patients
+    private void showPatients() {
+        try {
+            // Get the database connection
+            Connection connection = DatabaseConnection.getConnection();
 
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    // Get the database connection
-                    connection = DatabaseConnection.getConnection();
+            // Create a statement object
+            Statement statement = connection.createStatement();
 
-                    // Create a statement object
-                    Statement statement = connection.createStatement();
+            // Execute the queries and get the result sets
+            ResultSet patientResultSet = statement.executeQuery("SELECT * FROM mydb.Patient");
+            ResultSet diagnosisResultSet = statement.executeQuery("SELECT * FROM mydb.Diagnosis");
 
-                    // Execute the query and get the result set
-                    ResultSet resultSet = statement.executeQuery("SELECT * FROM mydb.Patient");
+            // Create table models with the result set data
+            DefaultTableModel patientTableModel = buildTableModel(patientResultSet);
+            DefaultTableModel diagnosisTableModel = buildTableModel(diagnosisResultSet);
 
-                    // Create a table model with the result set data
-                    DefaultTableModel tableModel = buildTableModel(resultSet);
+            // Set the patient table model to the table model with the result set data
+            JTable patientTable = (JTable) getContentPane().getComponent(1);
+            patientTable.setModel(patientTableModel);
 
-                    // Set the patient table model to the table model with the result set data
-                    table.setModel(tableModel);
+            // Set the diagnosis table model to the table model with the result set data
+            JTable diagnosisTable = (JTable) getContentPane().getComponent(2);
+            diagnosisTable.setModel(diagnosisTableModel);
 
-                    // Close the resources
-                    resultSet.close();
-                    statement.close();
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(PatientGUI.this, "Database connection error: " + ex.getMessage(),
-                            "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-
-        // Add the components to the frame
-        add(showButton, BorderLayout.NORTH);
-        add(new JScrollPane(table), BorderLayout.CENTER);
-
-        pack();
-        setLocationRelativeTo(null);
-        setVisible(true);
+            // Close the resources
+            patientResultSet.close();
+            diagnosisResultSet.close();
+            statement.close();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Database connection error: " + ex.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     // Helper method to convert a ResultSet to a DefaultTableModel
@@ -90,5 +81,7 @@ public class PatientGUI extends JFrame {
         // Create a DefaultTableModel with the column names and data vectors
         return new DefaultTableModel(data, columnNames);
     }
-
 }
+
+
+

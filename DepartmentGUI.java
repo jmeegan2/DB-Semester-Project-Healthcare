@@ -21,58 +21,7 @@ public class DepartmentGUI extends JFrame {
     private JTable table;
     private Connection connection;
 
-    public DepartmentGUI() {
-        setTitle("Department GUI");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Create the "Show" button
-        showButton = new JButton("Show Departments");
-        showButton.addActionListener(new ActionListener() {
-            private boolean tableVisible = false; // Keep track of whether the table is visible
-
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    // Get the database connection
-                    connection = DatabaseConnection.getConnection();
-
-                    // Create a statement object
-                    Statement statement = connection.createStatement();
-
-                    // Execute the query and get the result set
-                    ResultSet resultSet = statement.executeQuery("SELECT * FROM mydb.Department");
-
-                    // Create a JTable and set its model to display the result set data
-                    if (!tableVisible) {
-                        // Table is not visible, so display it
-                        table.setModel(buildTableModel(resultSet));
-                        tableVisible = true;
-                    } else {
-                        // Table is visible, so hide it
-                        table.setModel(new DefaultTableModel());
-                        tableVisible = false;
-                    }
-
-                    // Close the resources
-                    resultSet.close();
-                    statement.close();
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(DepartmentGUI.this, "Database connection error: " + ex.getMessage(),
-                            "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-
-        // Create the JTable with an empty model
-        table = new JTable(new DefaultTableModel());
-
-        // Add the components to the frame
-        add(showButton, BorderLayout.NORTH);
-        add(new JScrollPane(table), BorderLayout.CENTER);
-
-        pack();
-        setLocationRelativeTo(null);
-        setVisible(true);
-    }
 
     // Helper method to convert a ResultSet to a DefaultTableModel
     public static DefaultTableModel buildTableModel(ResultSet resultSet) throws SQLException {
