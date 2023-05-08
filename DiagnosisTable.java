@@ -1,26 +1,9 @@
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Vector;
-
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-public class DepartmentGUI extends JFrame {
-
-    private JButton showButton;
-    private JTable table;
-    private Connection connection;
-
+public class DiagnosisTable extends JFrame {
 
 
     // Helper method to convert a ResultSet to a DefaultTableModel
@@ -51,6 +34,5 @@ public class DepartmentGUI extends JFrame {
         // Create a DefaultTableModel with the column names and data vectors
         return new DefaultTableModel(data, columnNames);
     }
-
 
 }

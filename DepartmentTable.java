@@ -1,11 +1,21 @@
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Vector;
 
-public class AppointmentsGUI extends JFrame {
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+
+public class DepartmentTable extends JFrame {
+
+    private JButton showButton;
+    private JTable table;
+    private Connection connection;
+
+
 
     // Helper method to convert a ResultSet to a DefaultTableModel
     public static DefaultTableModel buildTableModel(ResultSet resultSet) throws SQLException {
@@ -35,5 +45,6 @@ public class AppointmentsGUI extends JFrame {
         // Create a DefaultTableModel with the column names and data vectors
         return new DefaultTableModel(data, columnNames);
     }
+
 
 }

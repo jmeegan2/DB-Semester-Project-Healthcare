@@ -1,12 +1,11 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Vector;
 
-public class DoctorGUI extends JFrame {
+public class AppointmentsTable extends JFrame {
 
     // Helper method to convert a ResultSet to a DefaultTableModel
     public static DefaultTableModel buildTableModel(ResultSet resultSet) throws SQLException {
