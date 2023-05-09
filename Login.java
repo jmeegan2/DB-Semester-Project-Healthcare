@@ -2,6 +2,9 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.*;
+import java.awt.*;
+
 public class Login extends JFrame {
     private JPanel loginPanel;
     private JPasswordField passwordField;
@@ -10,41 +13,44 @@ public class Login extends JFrame {
     private JLabel passwordLabel;
     private JButton loginButton;
 
+    private static Boolean login;
+
     public Login(String title) {
         super(title);
 
+        // set up the login panel components and layout
+        // ...
+
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setContentPane(loginPanel);
+
+        // set the preferred size of the JFrame to make it scale nicely
+        this.setPreferredSize(new Dimension(500, 200));
+
+        // center the JFrame on the screen
         this.pack();
-        loginButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (usernameField.getText().equals("yourUsername") && new String(passwordField.getPassword()).equals("yourPassword")) {
-                    // If the credentials are correct, open the next screen or new screen with new content
-                    // If the credentials are correct, open the MainPanel
-                    // Remove the login panel from the content pane
-                    getContentPane().remove(loginPanel);
-                    revalidate();
-                    repaint();
+        this.setLocationRelativeTo(null);
 
-                    MainPanel mainPanel = new MainPanel("Oncology Database Main Panel");
-                    mainPanel.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                    mainPanel.setVisible(true);
+        // add action listener to the login button
+        loginButton.addActionListener(e -> {
+            if (usernameField.getText().equals("JamesMeegan") && new String(passwordField.getPassword()).equals("Password")) {
+                // If the credentials are correct, open the MainPanel
+                // Remove the login panel from the content pane
+                Login.this.dispose();
 
+                MainPanel mainPanel = new MainPanel("Oncology Database Main Panel");
+                mainPanel.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                mainPanel.setVisible(true);
 
-                } else {
-                    // If the credentials are incorrect, show an error message
-                    JOptionPane.showMessageDialog(null, "Invalid username or password", "Error", JOptionPane.ERROR_MESSAGE);
-                }
+            } else {
+                // If the credentials are incorrect, show an error message
+                JOptionPane.showMessageDialog(null, "Invalid username or password", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
     }
 
     public static void main(String[] args) {
         JFrame frame = new Login("Oncology Database Login Panel");
-        frame.setSize(500, 200);
         frame.setVisible(true);
-
-
     }
 }
