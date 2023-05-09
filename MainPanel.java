@@ -58,6 +58,10 @@ public class MainPanel extends JFrame{
 
     public MainPanel(String title) {
         super(title);
+        ShowTablesButton.setPreferredSize(new Dimension(200, 75));
+        CreateButton.setPreferredSize(new Dimension(200, 75));
+        UpdateButton.setPreferredSize(new Dimension(200, 75));
+        DeleteButton.setPreferredSize(new Dimension(200, 75));
 
         // establish the database connection
         Connection connection;
@@ -72,7 +76,6 @@ public class MainPanel extends JFrame{
 
         try {
             Department.setModel(DepartmentTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM mydb.Department")));
-            Diagnosis.setModel(DiagnosisTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM mydb.Diagnosis")));
             Diagnosis.setModel(DiagnosisTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM mydb.Diagnosis")));
             Specimens.setModel(SpecimenTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM mydb.Specimen")));
             Study_Patient.setModel(StudyPatientTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM mydb.Study_Patient")));
@@ -94,6 +97,7 @@ public class MainPanel extends JFrame{
         TablesPanel.setVisible(false);
 
 // add action listener to the button
+        TablesPanel.setPreferredSize(new Dimension(1100, 500));
         ShowTablesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
