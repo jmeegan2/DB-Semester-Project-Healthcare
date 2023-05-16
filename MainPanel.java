@@ -111,7 +111,6 @@ public class MainPanel extends JFrame{
         this.setLocationRelativeTo(null);
         TablesPanel.setVisible(false);
 
-// add action listener to the button
         TablesPanel.setPreferredSize(new Dimension(1100, 500));
         ShowTablesButton.addActionListener(new ActionListener() {
             @Override
