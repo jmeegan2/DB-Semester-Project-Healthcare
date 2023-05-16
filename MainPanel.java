@@ -4,8 +4,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
 
+
 public class MainPanel extends JFrame{
-    private JPanel MainPanel;
+    private JPanel MainPaneZ;
     private JButton PatientButton;
     private JButton CreateButton;
     private JButton UpdateButton;
@@ -47,13 +48,26 @@ public class MainPanel extends JFrame{
     private JLabel doctorLabel;
     private JTextField Search_Doctor_ID;
     private JLabel doesntMatter;
-    private JButton UpdateBtn;
+    private JButton SEND_UpdateBtn;
     private JTextField Update_Lname;
     private JTextField Update_DOB;
     private JTextField Update_Doctor_ID;
     private JTextField Update_Fname;
     private JPanel UpdateSecondaryPanel;
     private JCheckBox Update_Treated_Value;
+    private JButton SearchBTNRightSide;
+    private JTextField TextFieldPatient;
+    private JButton sendButton;
+    private JPanel Patient_IdSearchPanel;
+    private JPanel PatientInformationPanel;
+    private JTable SearchedPatientTable;
+    private JTable SearchedPatientDoctor;
+    private JTable SearchedPatientDiagnosis;
+    private JTable SearchedPatientSpecimens;
+    private JTable SearchedPatientAppt;
+    private JTable SearchedPatientStudy_Patient;
+    private JTable SearchedPatientStudy;
+    private JScrollPane ds;
 
 
     public MainPanel(String title) {
@@ -62,6 +76,7 @@ public class MainPanel extends JFrame{
         CreateButton.setPreferredSize(new Dimension(200, 75));
         UpdateButton.setPreferredSize(new Dimension(200, 75));
         DeleteButton.setPreferredSize(new Dimension(200, 75));
+        SearchBTNRightSide.setPreferredSize(new Dimension(200, 75));
 
         // establish the database connection
         Connection connection;
@@ -91,7 +106,7 @@ public class MainPanel extends JFrame{
         }
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setContentPane(MainPanel);
+        this.setContentPane(MainPaneZ);
         this.pack();
         this.setLocationRelativeTo(null);
         TablesPanel.setVisible(false);
@@ -109,6 +124,7 @@ public class MainPanel extends JFrame{
                     UpdatePanel.setVisible(false);
                     CreatePanel.setVisible(false);
                     DeletePanel.setVisible(false);
+
                 }
             }
         });
@@ -126,6 +142,7 @@ public class MainPanel extends JFrame{
                     UpdatePanel.setVisible(false);
                     CreatePanel.setVisible(false);
                     DeletePanel.setVisible(true);
+
                 }
 
             }
@@ -152,7 +169,102 @@ public class MainPanel extends JFrame{
         UpdatePanel.setPreferredSize(new Dimension(400,250));
         UpdateSecondaryPanel.setPreferredSize(new Dimension(400,250));
         UpdatePanel.setVisible(false);
+        UpdateSecondaryPanel.setVisible(false);
+        Search_Btn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // get the patient ID to search for from the text field
+                String patientID = Search_Patient_ID.getText();
 
+                try {
+                    // check if the patient exists in the database
+                    String sql = "SELECT * FROM mydb.Patient WHERE Patient_ID = " + patientID;
+                    Statement statement = connection.createStatement();
+                    ResultSet resultSet = statement.executeQuery(sql);
+
+                    if (resultSet.next()) {
+                        // patient found
+                        String message = "Found Patient: " + resultSet.getString("Patient_ID");
+                        int confirm = JOptionPane.showConfirmDialog(MainPanel.this, message + "\nDo you want to update this patient?");
+
+                        if (confirm == JOptionPane.YES_OPTION) {
+                            // fill the fields with patient information
+                            // fill the fields with patient information
+                            togglePanelVisibility(PatientInformationPanel);
+
+//                            String treated = Search_Update_Treated_Checkbox.isSelected() ? "Y" : "N";
+                            String treated = resultSet.getString("Treated");
+                            if (treated.equals("Y")) {
+                                Search_Update_Treated.setSelected(true);
+                            } else {
+                                Search_Update_Treated.setSelected(false);
+                            }
+                            Search_Fname_Fill.setText(resultSet.getString("Fname"));
+                            Seach_Lname_Fill.setText(resultSet.getString("Lname"));
+                            Search_DOB_Fill.setText(resultSet.getString("DOB"));
+                            Search_Doctor_ID.setText(resultSet.getString("Doctor_ID"));
+                        }
+                    } else {
+                        // patient not found
+                        JOptionPane.showMessageDialog(MainPanel.this, "Patient not found", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(MainPanel.this, "Database error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+        SEND_UpdateBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // get the patient ID to update from the search panel
+                String patientID = Search_Patient_ID.getText();
+
+                // get the updated patient information from the update panel
+                String updateFname = Update_Fname.getText();
+                String updateLname = Update_Lname.getText();
+                String updateDOB = Update_DOB.getText();
+                String updateDoctorID = Update_Doctor_ID.getText();
+                String updateTreated = Search_Update_Treated.isSelected() ? "Y" : "N";
+
+                try {
+                    // update the patient information in the database
+                    String sql = "UPDATE mydb.Patient SET Fname = ?, Lname = ?, DOB = ?, Doctor_ID = ?, Treated = ? WHERE Patient_ID = ?";
+                    PreparedStatement statement = connection.prepareStatement(sql);
+                    statement.setString(1, updateFname);
+                    statement.setString(2, updateLname);
+                    statement.setString(3, updateDOB);
+                    statement.setString(4, updateDoctorID);
+                    statement.setString(5, updateTreated);
+                    statement.setString(6, patientID);
+
+                    int rowsAffected = statement.executeUpdate();
+
+                    // check if the update was successful
+                    if (rowsAffected == 0) {
+                        JOptionPane.showMessageDialog(MainPanel.this, "Patient not found", "Error", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(MainPanel.this, "Patient updated successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        // hide the update panel
+                        UpdateSecondaryPanel.setVisible(false);
+
+                        // refresh the table to show the updated data
+                        Patients.setModel(PatientTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM mydb.Patient")));
+                        Search_Patient_ID.setText("");
+                        Search_Update_Treated.setSelected(false);
+                        Search_Fname_Fill.setText("");
+                        Seach_Lname_Fill.setText("");
+                        Search_DOB_Fill.setText("");
+                        Search_Doctor_ID.setText("");
+                    }
+
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(MainPanel.this, "Database error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
         UpdateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -242,8 +354,13 @@ public class MainPanel extends JFrame{
                             JOptionPane.showMessageDialog(MainPanel.this, "Patient deleted successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
                         }
 
-                        // refresh the table to show the updated data
                         Patients.setModel(PatientTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM mydb.Patient")));
+                        Diagnosis.setModel(DiagnosisTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM mydb.Diagnosis")));
+                        Specimens.setModel(SpecimenTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM mydb.Specimen")));
+                        Study_Patient.setModel(StudyPatientTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM mydb.Study_Patient")));
+                        Study.setModel(StudyTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM mydb.Study")));
+                        Appointments.setModel(AppointmentsTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM mydb.Appointments")));
+                        Doctors.setModel(DoctorTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM mydb.Doctor")));
                     }
 
                 } catch (SQLException ex) {
@@ -252,9 +369,7 @@ public class MainPanel extends JFrame{
                 }
             }
         });
-
-
-                    Create_Btn.addActionListener(new ActionListener() {
+        Create_Btn.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     // get the values of the text fields for creating a new patient
@@ -290,99 +405,57 @@ public class MainPanel extends JFrame{
                 }
             });
 
-        UpdateSecondaryPanel.setVisible(false);
-        Search_Btn.addActionListener(new ActionListener() {
+        PatientInformationPanel.setVisible(false);
+        Patient_IdSearchPanel.setVisible(false);
+        SearchBTNRightSide.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // get the patient ID to search for from the text field
-                String patientID = Search_Patient_ID.getText();
-
+                togglePanelVisibility(Patient_IdSearchPanel);
+                if(PatientInformationPanel.isVisible()) {
+                    PatientInformationPanel.setVisible(false);
+                }
+            }
+        });
+        sendButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String patientID_SearchPanel = TextFieldPatient.getText();
                 try {
                     // check if the patient exists in the database
-                    String sql = "SELECT * FROM mydb.Patient WHERE Patient_ID = " + patientID;
+                    String sql = "SELECT * FROM mydb.Patient WHERE Patient_ID = " + patientID_SearchPanel;
                     Statement statement = connection.createStatement();
                     ResultSet resultSet = statement.executeQuery(sql);
 
                     if (resultSet.next()) {
                         // patient found
+                        PatientInformationPanel.setVisible(true);
                         String message = "Found Patient: " + resultSet.getString("Patient_ID");
-                        int confirm = JOptionPane.showConfirmDialog(MainPanel.this, message + "\nDo you want to update this patient?");
+                        int confirm = JOptionPane.showConfirmDialog(MainPanel.this, message + "\nWould you like to view patients data?");
 
                         if (confirm == JOptionPane.YES_OPTION) {
-                            // fill the fields with patient information
-                            // fill the fields with patient information
+                            //This is the search left side button Search area
+                            String patientId = patientID_SearchPanel;
+                            String PatientQuery = "SELECT * FROM mydb.Patient WHERE Patient_ID = '" + patientId + "'";
+                            String PatientDiagnosisQuery = "SELECT * FROM mydb.Diagnosis WHERE Patient_ID = '" + patientId + "'";
+                            String PatientAppt = "SELECT * FROM mydb.Appointments WHERE Patient_ID = '" + patientId + "'";
+                            String PatientStudyPatient = "SELECT * FROM mydb.Study_Patient WHERE Patient_ID = '" + patientId + "'";
+                            String PatientSpecimen = "SELECT * FROM mydb.Specimen WHERE Patient_ID = '" + patientId + "'";
+                            String PatientDoctor = "SELECT d.* FROM mydb.Doctor d INNER JOIN mydb.Patient p ON d.Doctor_ID = p.Doctor_ID WHERE p.Patient_ID = '" + patientId + "'";
 
-                            UpdateSecondaryPanel.setVisible(true);
-                            if (Search_Update_Treated.isSelected()) {
-                                Search_Update_Treated.isSelected();
-                            } else {
+                            SearchedPatientDoctor.setModel(DoctorTable.buildTableModel(connection.createStatement().executeQuery(PatientDoctor)));
 
-                            }
-//                            String treated = Search_Update_Treated_Checkbox.isSelected() ? "Y" : "N";
-                            String treated = resultSet.getString("Treated");
-                            if (treated.equals("Y")) {
-                                Search_Update_Treated.setSelected(true);
-                            } else {
-                                Search_Update_Treated.setSelected(false);
-                            }
-                            Search_Fname_Fill.setText(resultSet.getString("Fname"));
-                            Seach_Lname_Fill.setText(resultSet.getString("Lname"));
-                            Search_DOB_Fill.setText(resultSet.getString("DOB"));
-                            Search_Doctor_ID.setText(resultSet.getString("Doctor_ID"));
-                        }
+                            SearchedPatientTable.setModel(PatientTable.buildTableModel(connection.createStatement().executeQuery(PatientQuery)));
+                            SearchedPatientDiagnosis.setModel(DiagnosisTable.buildTableModel(connection.createStatement().executeQuery(PatientDiagnosisQuery)));
+                            SearchedPatientAppt.setModel(AppointmentsTable.buildTableModel(connection.createStatement().executeQuery(PatientAppt)));
+                            SearchedPatientStudy_Patient.setModel(StudyPatientTable.buildTableModel(connection.createStatement().executeQuery(PatientStudyPatient)));
+                            SearchedPatientSpecimens.setModel(SpecimenTable.buildTableModel(connection.createStatement().executeQuery(PatientSpecimen)));
+
+                            String patientStudyQuery = "SELECT s.* FROM mydb.Study s INNER JOIN mydb.Study_Patient sp ON s.Study_ID = sp.Study_ID WHERE sp.Patient_ID = '" + patientId + "'";
+
+                            SearchedPatientStudy.setModel(StudyTable.buildTableModel(connection.createStatement().executeQuery(patientStudyQuery)));                        }
                     } else {
                         // patient not found
                         JOptionPane.showMessageDialog(MainPanel.this, "Patient not found", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(MainPanel.this, "Database error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-        UpdateBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // get the patient ID to update from the search panel
-                String patientID = Search_Patient_ID.getText();
-
-                // get the updated patient information from the update panel
-                String updateFname = Update_Fname.getText();
-                String updateLname = Update_Lname.getText();
-                String updateDOB = Update_DOB.getText();
-                String updateDoctorID = Update_Doctor_ID.getText();
-                String updateTreated = Search_Update_Treated.isSelected() ? "Y" : "N";
-
-                try {
-                    // update the patient information in the database
-                    String sql = "UPDATE mydb.Patient SET Fname = ?, Lname = ?, DOB = ?, Doctor_ID = ?, Treated = ? WHERE Patient_ID = ?";
-                    PreparedStatement statement = connection.prepareStatement(sql);
-                    statement.setString(1, updateFname);
-                    statement.setString(2, updateLname);
-                    statement.setString(3, updateDOB);
-                    statement.setString(4, updateDoctorID);
-                    statement.setString(5, updateTreated);
-                    statement.setString(6, patientID);
-
-                    int rowsAffected = statement.executeUpdate();
-
-                    // check if the update was successful
-                    if (rowsAffected == 0) {
-                        JOptionPane.showMessageDialog(MainPanel.this, "Patient not found", "Error", JOptionPane.ERROR_MESSAGE);
-                    } else {
-                        JOptionPane.showMessageDialog(MainPanel.this, "Patient updated successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
-                        // hide the update panel
-                        UpdateSecondaryPanel.setVisible(false);
-
-                        // refresh the table to show the updated data
-                        Patients.setModel(PatientTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM mydb.Patient")));
-                        Search_Patient_ID.setText("");
-                        Search_Update_Treated.setSelected(false);
-                        Search_Fname_Fill.setText("");
-                        Seach_Lname_Fill.setText("");
-                        Search_DOB_Fill.setText("");
-                        Search_Doctor_ID.setText("");
                     }
 
                 } catch (SQLException ex) {
@@ -400,5 +473,9 @@ public class MainPanel extends JFrame{
         frame.setLocationRelativeTo(null);
 
 
+    }
+    private void togglePanelVisibility(JPanel panel) {
+        boolean isPanelVisible = panel.isVisible(); // Get the current visibility state
+        panel.setVisible(!isPanelVisible); // Toggle the visibility of the panel
     }
 }
