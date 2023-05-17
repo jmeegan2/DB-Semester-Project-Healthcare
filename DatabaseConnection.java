@@ -18,9 +18,9 @@ public class DatabaseConnection {
 
             // Set up the connection to the local MySQL database on port 3306
             connection = DriverManager.getConnection(
-                    "jdbc:mysql://127.0.0.1:3306/mydb?useSSL=false",
-                    "root",
-                    "FoxHound422"
+                    "jdbc:mysql://triton.towson.edu:3360/jmeega1db",
+                    "jmeega1",
+                    "COSC*mxtei"
             );
         }
 

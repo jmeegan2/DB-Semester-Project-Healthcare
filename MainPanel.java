@@ -90,14 +90,14 @@ public class MainPanel extends JFrame{
         }
 
         try {
-            Department.setModel(DepartmentTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM mydb.Department")));
-            Diagnosis.setModel(DiagnosisTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM mydb.Diagnosis")));
-            Specimens.setModel(SpecimenTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM mydb.Specimen")));
-            Study_Patient.setModel(StudyPatientTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM mydb.Study_Patient")));
-            Study.setModel(StudyTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM mydb.Study")));
-            Appointments.setModel(AppointmentsTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM mydb.Appointments")));
-            Doctors.setModel(DoctorTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM mydb.Doctor")));
-            Patients.setModel(PatientTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM mydb.Patient")));
+            Department.setModel(DepartmentTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM jmeega1db.Department")));
+            Diagnosis.setModel(DiagnosisTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM jmeega1db.Diagnosis")));
+            Specimens.setModel(SpecimenTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM jmeega1db.Specimen")));
+            Study_Patient.setModel(StudyPatientTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM jmeega1db.Study_Patient")));
+            Study.setModel(StudyTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM jmeega1db.Study")));
+            Appointments.setModel(AppointmentsTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM jmeega1db.Appointments")));
+            Doctors.setModel(DoctorTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM jmeega1db.Doctor")));
+            Patients.setModel(PatientTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM jmeega1db.Patient")));
         }catch (SQLException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(MainPanel.this, "Database error: " + e.getMessage(),
@@ -177,7 +177,7 @@ public class MainPanel extends JFrame{
 
                 try {
                     // check if the patient exists in the database
-                    String sql = "SELECT * FROM mydb.Patient WHERE Patient_ID = " + patientID;
+                    String sql = "SELECT * FROM jmeega1db.Patient WHERE Patient_ID = " + patientID;
                     Statement statement = connection.createStatement();
                     ResultSet resultSet = statement.executeQuery(sql);
 
@@ -229,7 +229,7 @@ public class MainPanel extends JFrame{
 
                 try {
                     // update the patient information in the database
-                    String sql = "UPDATE mydb.Patient SET Fname = ?, Lname = ?, DOB = ?, Doctor_ID = ?, Treated = ? WHERE Patient_ID = ?";
+                    String sql = "UPDATE jmeega1db.Patient SET Fname = ?, Lname = ?, DOB = ?, Doctor_ID = ?, Treated = ? WHERE Patient_ID = ?";
                     PreparedStatement statement = connection.prepareStatement(sql);
                     statement.setString(1, updateFname);
                     statement.setString(2, updateLname);
@@ -249,7 +249,7 @@ public class MainPanel extends JFrame{
                         UpdateSecondaryPanel.setVisible(false);
 
                         // refresh the table to show the updated data
-                        Patients.setModel(PatientTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM mydb.Patient")));
+                        Patients.setModel(PatientTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM jmeega1db.Patient")));
                         Search_Patient_ID.setText("");
                         Search_Update_Treated.setSelected(false);
                         Search_Fname_Fill.setText("");
@@ -290,7 +290,7 @@ public class MainPanel extends JFrame{
                     // delete the specimens associated with the patient
                     int confirmSpecimens = JOptionPane.showConfirmDialog(MainPanel.this, "Are you sure you want to delete all specimens associated with this patient?");
                     if (confirmSpecimens == JOptionPane.YES_OPTION) {
-                        String sqlDeleteSpecimens = "DELETE FROM mydb.Specimen WHERE Patient_ID = " + patientID;
+                        String sqlDeleteSpecimens = "DELETE FROM jmeega1db.Specimen WHERE Patient_ID = " + patientID;
                         Statement statementSpecimen = connection.createStatement();
                         int rowsAffectedSpecimen = statementSpecimen.executeUpdate(sqlDeleteSpecimens);
 
@@ -303,7 +303,7 @@ public class MainPanel extends JFrame{
                     // delete the diagnoses associated with the patient
                     int confirmDiagnoses = JOptionPane.showConfirmDialog(MainPanel.this, "Are you sure you want to delete all diagnoses associated with this patient?");
                     if (confirmDiagnoses == JOptionPane.YES_OPTION) {
-                        String sqlDeleteDiagnoses = "DELETE FROM mydb.Diagnosis WHERE Patient_ID = " + patientID;
+                        String sqlDeleteDiagnoses = "DELETE FROM jmeega1db.Diagnosis WHERE Patient_ID = " + patientID;
                         Statement statementDiagnosis = connection.createStatement();
                         int rowsAffectedDiagnosis = statementDiagnosis.executeUpdate(sqlDeleteDiagnoses);
 
@@ -316,7 +316,7 @@ public class MainPanel extends JFrame{
                     // delete the study patients associated with the patient
                     int confirmStudyPatients = JOptionPane.showConfirmDialog(MainPanel.this, "Are you sure you want to delete all study records associated with this patient?");
                     if (confirmStudyPatients == JOptionPane.YES_OPTION) {
-                        String sqlDeleteStudyPatients = "DELETE FROM mydb.Study_Patient WHERE Patient_ID = " + patientID;
+                        String sqlDeleteStudyPatients = "DELETE FROM jmeega1db.Study_Patient WHERE Patient_ID = " + patientID;
                         Statement statementStudyPatient = connection.createStatement();
                         int rowsAffectedStudyPatient = statementStudyPatient.executeUpdate(sqlDeleteStudyPatients);
 
@@ -329,7 +329,7 @@ public class MainPanel extends JFrame{
                     // delete the appointments associated with the patient
                     int confirmAppointments = JOptionPane.showConfirmDialog(MainPanel.this, "Are you sure you want to delete all appointments associated with this patient?");
                     if (confirmAppointments == JOptionPane.YES_OPTION) {
-                        String sqlDeleteAppointments = "DELETE FROM mydb.Appointments WHERE Patient_ID = " + patientID;
+                        String sqlDeleteAppointments = "DELETE FROM jmeega1db.Appointments WHERE Patient_ID = " + patientID;
                         Statement statementAppointments = connection.createStatement();
                         int rowsAffectedAppointments = statementAppointments.executeUpdate(sqlDeleteAppointments);
 
@@ -342,7 +342,7 @@ public class MainPanel extends JFrame{
                     // delete the patient from the database
                     int confirmPatient = JOptionPane.showConfirmDialog(MainPanel.this, "Are you sure you want to delete this patient?");
                     if (confirmPatient == JOptionPane.YES_OPTION) {
-                        String sqlDeletePatient = "DELETE FROM mydb.Patient WHERE Patient_ID = " + patientID;
+                        String sqlDeletePatient = "DELETE FROM jmeega1db.Patient WHERE Patient_ID = " + patientID;
                         Statement statementPatient = connection.createStatement();
                         int rowsAffectedPatient = statementPatient.executeUpdate(sqlDeletePatient);
 
@@ -353,13 +353,13 @@ public class MainPanel extends JFrame{
                             JOptionPane.showMessageDialog(MainPanel.this, "Patient deleted successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
                         }
 
-                        Patients.setModel(PatientTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM mydb.Patient")));
-                        Diagnosis.setModel(DiagnosisTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM mydb.Diagnosis")));
-                        Specimens.setModel(SpecimenTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM mydb.Specimen")));
-                        Study_Patient.setModel(StudyPatientTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM mydb.Study_Patient")));
-                        Study.setModel(StudyTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM mydb.Study")));
-                        Appointments.setModel(AppointmentsTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM mydb.Appointments")));
-                        Doctors.setModel(DoctorTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM mydb.Doctor")));
+                        Patients.setModel(PatientTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM jmeega1db.Patient")));
+                        Diagnosis.setModel(DiagnosisTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM jmeega1db.Diagnosis")));
+                        Specimens.setModel(SpecimenTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM jmeega1db.Specimen")));
+                        Study_Patient.setModel(StudyPatientTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM jmeega1db.Study_Patient")));
+                        Study.setModel(StudyTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM jmeega1db.Study")));
+                        Appointments.setModel(AppointmentsTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM jmeega1db.Appointments")));
+                        Doctors.setModel(DoctorTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM jmeega1db.Doctor")));
                     }
 
                 } catch (SQLException ex) {
@@ -380,7 +380,7 @@ public class MainPanel extends JFrame{
                     String doctorID = Create_Doctor_ID.getText();
 
                     // build the SQL query to insert a new patient into the database
-                    String sqlInsertPatient = "INSERT INTO mydb.Patient (Patient_ID, Fname, Lname, DOB, Treated, Doctor_ID) VALUES ('" + patientID + "', '" + firstName + "', '" + lastName + "', '" + dob + "', '" + treated + "', '" + doctorID + "')";
+                    String sqlInsertPatient = "INSERT INTO jmeega1db.Patient (Patient_ID, Fname, Lname, DOB, Treated, Doctor_ID) VALUES ('" + patientID + "', '" + firstName + "', '" + lastName + "', '" + dob + "', '" + treated + "', '" + doctorID + "')";
 
                     try {
                         // execute the query
@@ -395,7 +395,7 @@ public class MainPanel extends JFrame{
                         }
 
                         // refresh the table to show the updated data
-                        Patients.setModel(PatientTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM mydb.Patient")));
+                        Patients.setModel(PatientTable.buildTableModel(connection.createStatement().executeQuery("SELECT * FROM jmeega1db.Patient")));
 
                     } catch (SQLException ex) {
                         ex.printStackTrace();
@@ -421,7 +421,7 @@ public class MainPanel extends JFrame{
                 String patientID_SearchPanel = TextFieldPatient.getText();
                 try {
                     // check if the patient exists in the database
-                    String sql = "SELECT * FROM mydb.Patient WHERE Patient_ID = " + patientID_SearchPanel;
+                    String sql = "SELECT * FROM jmeega1db.Patient WHERE Patient_ID = " + patientID_SearchPanel;
                     Statement statement = connection.createStatement();
                     ResultSet resultSet = statement.executeQuery(sql);
 
@@ -434,12 +434,12 @@ public class MainPanel extends JFrame{
                         if (confirm == JOptionPane.YES_OPTION) {
                             //This is the search left side button Search area
                             String patientId = patientID_SearchPanel;
-                            String PatientQuery = "SELECT * FROM mydb.Patient WHERE Patient_ID = '" + patientId + "'";
-                            String PatientDiagnosisQuery = "SELECT * FROM mydb.Diagnosis WHERE Patient_ID = '" + patientId + "'";
-                            String PatientAppt = "SELECT * FROM mydb.Appointments WHERE Patient_ID = '" + patientId + "'";
-                            String PatientStudyPatient = "SELECT * FROM mydb.Study_Patient WHERE Patient_ID = '" + patientId + "'";
-                            String PatientSpecimen = "SELECT * FROM mydb.Specimen WHERE Patient_ID = '" + patientId + "'";
-                            String PatientDoctor = "SELECT d.* FROM mydb.Doctor d INNER JOIN mydb.Patient p ON d.Doctor_ID = p.Doctor_ID WHERE p.Patient_ID = '" + patientId + "'";
+                            String PatientQuery = "SELECT * FROM jmeega1db.Patient WHERE Patient_ID = '" + patientId + "'";
+                            String PatientDiagnosisQuery = "SELECT * FROM jmeega1db.Diagnosis WHERE Patient_ID = '" + patientId + "'";
+                            String PatientAppt = "SELECT * FROM jmeega1db.Appointments WHERE Patient_ID = '" + patientId + "'";
+                            String PatientStudyPatient = "SELECT * FROM jmeega1db.Study_Patient WHERE Patient_ID = '" + patientId + "'";
+                            String PatientSpecimen = "SELECT * FROM jmeega1db.Specimen WHERE Patient_ID = '" + patientId + "'";
+                            String PatientDoctor = "SELECT d.* FROM jmeega1db.Doctor d INNER JOIN jmeega1db.Patient p ON d.Doctor_ID = p.Doctor_ID WHERE p.Patient_ID = '" + patientId + "'";
 
                             SearchedPatientDoctor.setModel(DoctorTable.buildTableModel(connection.createStatement().executeQuery(PatientDoctor)));
 
@@ -449,7 +449,7 @@ public class MainPanel extends JFrame{
                             SearchedPatientStudy_Patient.setModel(StudyPatientTable.buildTableModel(connection.createStatement().executeQuery(PatientStudyPatient)));
                             SearchedPatientSpecimens.setModel(SpecimenTable.buildTableModel(connection.createStatement().executeQuery(PatientSpecimen)));
 
-                            String patientStudyQuery = "SELECT s.* FROM mydb.Study s INNER JOIN mydb.Study_Patient sp ON s.Study_ID = sp.Study_ID WHERE sp.Patient_ID = '" + patientId + "'";
+                            String patientStudyQuery = "SELECT s.* FROM jmeega1db.Study s INNER JOIN jmeega1db.Study_Patient sp ON s.Study_ID = sp.Study_ID WHERE sp.Patient_ID = '" + patientId + "'";
 
                             SearchedPatientStudy.setModel(StudyTable.buildTableModel(connection.createStatement().executeQuery(patientStudyQuery)));                        }
                     } else {
