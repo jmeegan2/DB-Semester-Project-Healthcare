@@ -33,10 +33,11 @@ public class Login extends JFrame {
 
         // add action listener to the login button
         loginButton.addActionListener(e -> {
-            if (usernameField.getText().equals("JamesMeegan") && new String(passwordField.getPassword()).equals("Password")) {
-                // If the credentials are correct, open the MainPanel
+            if (true) {
+                // If any value is considered valid, open the MainPanel
                 // Remove the login panel from the content pane
                 Login.this.dispose();
+
 
                 MainPanel mainPanel = new MainPanel("Oncology Database Main Panel");
                 mainPanel.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
